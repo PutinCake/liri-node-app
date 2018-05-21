@@ -1,6 +1,4 @@
-# liri-node-app
-
-#Liri Bot
+#Liri-node-app
 
 ###About
 LIRI is a Language Interpretation and Recognition Interface. LIRI will be a command line node app that takes in parameters and gives you back data.
@@ -46,5 +44,5 @@ If the user doesn't type a movie in, the program will output data for the movie 
   * It should run movie-this for "Space Jam" as follows the text in random.txt.
   * Feel free to change the text in that document to test out the feature for other commands.
 
-Authors
+Author
 Zhiye Mo
