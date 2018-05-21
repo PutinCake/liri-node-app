@@ -30,15 +30,15 @@ switch (action) {
     break;
 
     case "spotify-this-song":
-	spotify(inputs);
+	spotifyMy(inputs);
 	break;
 
 	case "movie-this":
 	movie(inputs);
 	break;
 
-	case "do-what-it-say":
-	doWhatItSays(inputs);
+	case "do-what-it-says":
+	doIt(inputs);
 	break;
 }
 
@@ -62,23 +62,28 @@ function twitter(inputs){
 
 
 //spotify function
-function spotify(inputs) {
+function spotifyMy(inputs) {
 	//spotify search method
 	if (!inputs){
 		inputs = 'The Sign';
 	}
-		spotify.search({ type: 'track', query: inputs }, function(err, data) {
+		spotify.search({ type: 'track', limit: 5, query: inputs }, function(err, data) {
 			if (err){
 	            return console.log('Error occurred: ' + err);
-	        }
-
+			} 
+			//try to build a loop but failed!!!
+				//  for (var i = 0; i < data.tracks.items.length; i++){
+				
+			// console.log(data.tracks.items);
 			//results
-			console.log("==================Results============================")
-	        console.log("Artist(s): " + data.tracks.items[0].artists[0].name);
-	        console.log("Song Name: " + data.tracks.items[0].name);
-	        console.log("Preview Link: " + data.tracks.items[0].preview_url);
-			console.log("Album: " + data.tracks.items[0].album.name);
-			console.log("==================End============================")
+			console.log("==================Results============================");
+	        console.log("Artist(s): " + data.tracks.items[i].artists[i].name);
+	        console.log("Song Name: " + data.tracks.items[i].name);
+	        console.log("Preview Link: " + data.tracks.items[i].preview_url);
+			console.log("Album: " + data.tracks.items[i].album.name);
+			console.log("==================End============================");
+		// }
+		
 	});
 }
 
@@ -109,17 +114,28 @@ function movie(inputs) {
 }
 
 //do what it says function
-function doWhatItSays() {
+function doIt() {
+	fs.readFile('random.txt', "utf8", function(error, data){
 
-	fs.readFile("random.txt", "utf8", function(err, data) {
-		if (err) {
-			logOutput.error(err);
-		} else {
+		if (error) {
+    		return console.log(error);
+  		}
 
-			// Creates array with data.
-			var randomArray = data.split(",");
+		// Then split it by commas (to make it more readable)
+		var dataArr = data.split(",");
 
-			
-		}
-	});
-}
+		// Each command is represented. Because of the format in the txt file, remove the quotes to run these commands. 
+		if (dataArr[0] === "spotify-this-song") {
+			var song_info = dataArr[1];
+			spotify(song_info);
+		} else if (dataArr[0] === "my-tweets") {
+			var tweets_name = dataArr[1];
+			twitter(tweets_name);
+		} else if(dataArr[0] === "movie-this") {
+			var movie_name = dataArr[1];
+			movie(movie_name);
+		} 
+		
+  	});
+
+};
