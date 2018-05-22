@@ -52,8 +52,14 @@ function twitter(inputs){
             for (i = 0; i < tweets.length; i++){
 				//results
                 console.log("Tweet: " + "'" + tweets[i].text + "'" + " Created At: " + tweets[i].created_at);
-                console.log("=================================================================");
-            }
+				console.log("=================================================================");
+				//append to log.txt
+				fs.appendFile('log.txt', tweets[i].text + ' Created at: ' + tweets[i].created_at + '\n=================================================================\n', function(err) {
+					if (err) throw err;
+					console.log("Saved!");
+				});
+			}
+			
         } else {
             console.log(error);
         }
@@ -67,7 +73,7 @@ function spotifyMy(inputs) {
 	if (!inputs){
 		inputs = 'The Sign';
 	}
-		spotify.search({ type: 'track', limit: 5, query: inputs }, function(err, data) {
+		spotify.search({ type: 'track', query: inputs }, function(err, data) {
 			if (err){
 	            return console.log('Error occurred: ' + err);
 			} 
@@ -77,27 +83,31 @@ function spotifyMy(inputs) {
 			// console.log(data.tracks.items);
 			//results
 			console.log("==================Results============================");
-	        console.log("Artist(s): " + data.tracks.items[i].artists[i].name);
-	        console.log("Song Name: " + data.tracks.items[i].name);
-	        console.log("Preview Link: " + data.tracks.items[i].preview_url);
-			console.log("Album: " + data.tracks.items[i].album.name);
+	        console.log("Artist(s): " + data.tracks.items[0].artists[0].name);
+	        console.log("Song Name: " + data.tracks.items[0].name);
+	        console.log("Preview Link: " + data.tracks.items[0].preview_url);
+			console.log("Album: " + data.tracks.items[0].album.name);
 			console.log("==================End============================");
-		// }
-		
+			//append to log.txt
+			fs.appendFile('log.txt', 'Artist: ' + data.tracks.items[0].artists[0].name + '\n' + '; Song Name: ' + data.tracks.items[0].name + '\n' + '; Spotify Preview Link: ' + data.tracks.items[0].external_urls.spotify + '\n' + '; Album: ' + data.tracks.items[0].album.name  + '\n=================================================================\n', function(err) {
+				if (err) throw err;
+				console.log('Saved!');
+			});
+			
 	});
 }
 
 
 //movie function
 function movie(inputs) {
-
-	//var queryUrl = "http://www.omdbapi.com/?t=" + inputs + "&y=&plot=short&apikey=40e9cece";
+	//default movie: 'Mr.Nobody'
+	if (!inputs){
+		inputs = 'Mr.Nobody';
+	}
 	//set OMDB API
+	//var queryUrl = "http://www.omdbapi.com/?t=" + inputs + "&y=&plot=short&apikey=40e9cece";
 	request("http://www.omdbapi.com/?t=" + inputs + "&y=&plot=short&apikey=trilogy", function(error, response, body) {
-		//default movie: 'Mr.Nobody'
-		if (!inputs){
-        	inputs = 'Mr.Nobody';
-		}
+		
 		//other movies results
 		if (!error && response.statusCode === 200) {
 			console.log("==============================Movie Details========================")
@@ -108,13 +118,22 @@ function movie(inputs) {
 		    console.log("Country: " + JSON.parse(body).Country);
 		    console.log("Language: " + JSON.parse(body).Language);
 		    console.log("Plot: " + JSON.parse(body).Plot);
-		    console.log("Actors: " + JSON.parse(body).Actors);
-		}
+			console.log("Actors: " + JSON.parse(body).Actors);
+			//set a varible = JSON.parse(body) FIRST!!!!!!!!
+			var movieInfo = JSON.parse(body);
+			//append to log.txt
+			fs.appendFile('log.txt', 'Title: ' + movieInfo.Title + '\n' + '; Year: ' + movieInfo.Year + '\n' + '; IMDB Rating: ' + movieInfo.imdbRating + '\n' + '; Country: ' + movieInfo.Country + '\n' + '; Language: ' + movieInfo.Language + '\n' + 'Plot: ' + movieInfo.Plot + '\n' + '; Actors: '+ movieInfo.Actors + '\n' + '; Rotten Tomatoes Rating: ' + movieInfo.Ratings[1].Value + '\n' + '\n=================================================================\n', function(err) {
+				if (err) throw err;
+				console.log("Saved!");
+			});
+		} 
+		
 	});
 }
 
 //do what it says function
 function doIt() {
+
 	fs.readFile('random.txt', "utf8", function(error, data){
 
 		if (error) {
@@ -139,3 +158,4 @@ function doIt() {
   	});
 
 };
+
